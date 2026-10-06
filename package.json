@@ -1,0 +1,31 @@
+{
+  "name": "@dawid-ai/model-fit",
+  "version": "0.1.0",
+  "description": "Which local AI models will actually run well on this computer — memory need, fit, and estimated speed from the hardware. Pure, zero dependencies. Ideas and tables ported from llmfit.",
+  "license": "MIT",
+  "author": "Dawid Jozwiak",
+  "repository": { "type": "git", "url": "git+https://github.com/dawid-ai/model-fit.git" },
+  "keywords": ["llm", "local-ai", "gguf", "vram", "hardware", "model-selection", "ollama", "llama.cpp"],
+  "type": "module",
+  "main": "./dist/src/index.js",
+  "types": "./dist/src/index.d.ts",
+  "exports": {
+    ".": { "types": "./dist/src/index.d.ts", "import": "./dist/src/index.js" },
+    "./data/*.json": "./data/*.json"
+  },
+  "files": ["dist/src", "dist/data", "data", "LICENSE", "README.md"],
+  "sideEffects": false,
+  "engines": { "node": ">=20.10" },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "pnpm run build && vitest run",
+    "prepublishOnly": "pnpm run typecheck && pnpm test"
+  },
+  "devDependencies": {
+    "@types/node": "^26.1.1",
+    "typescript": "^5.7.0",
+    "vitest": "^4.1.10"
+  },
+  "packageManager": "pnpm@9.15.4"
+}

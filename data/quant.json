@@ -1,0 +1,20 @@
+{
+  "source": "Ported from llmfit 1.1.16 (MIT, Alex Jones): llmfit-core/src/models.rs quant_bpp, quant_bytes_per_param, quant_speed_multiplier. See LICENSE.",
+  "fields": {
+    "bpp": "bytes per parameter for MEMORY (weights on disk/in VRAM, incl. format overhead)",
+    "speedBpp": "bytes per parameter read per token for the SPEED estimate",
+    "speedMultiplier": "speed factor for the fallback (unknown-GPU / CPU) estimate"
+  },
+  "default": { "bpp": 0.58, "speedBpp": 0.5, "speedMultiplier": 1.0 },
+  "quants": {
+    "F16": { "bpp": 2.0, "speedBpp": 2.0, "speedMultiplier": 0.6 },
+    "BF16": { "bpp": 2.0, "speedBpp": 2.0, "speedMultiplier": 0.6 },
+    "Q8_0": { "bpp": 1.05, "speedBpp": 1.0, "speedMultiplier": 0.8 },
+    "Q6_K": { "bpp": 0.8, "speedBpp": 0.75, "speedMultiplier": 0.95 },
+    "Q5_K_M": { "bpp": 0.68, "speedBpp": 0.625, "speedMultiplier": 1.0 },
+    "Q4_K_M": { "bpp": 0.58, "speedBpp": 0.5, "speedMultiplier": 1.15 },
+    "Q4_0": { "bpp": 0.58, "speedBpp": 0.5, "speedMultiplier": 1.15 },
+    "Q3_K_M": { "bpp": 0.48, "speedBpp": 0.375, "speedMultiplier": 1.25 },
+    "Q2_K": { "bpp": 0.37, "speedBpp": 0.25, "speedMultiplier": 1.35 }
+  }
+}

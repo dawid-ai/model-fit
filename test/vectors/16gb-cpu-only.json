@@ -1,0 +1,250 @@
+[
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:1.5b",
+        "params": 1.543714304,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.5047292963199999,
+      "tokPerSec": 17.208495076560485,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:3b",
+        "params": 3.085938688,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 36,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.43046943904,
+      "tokPerSec": 8.608401749296194,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:7b",
+        "params": 7.615616512,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 4,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 5.13580757696,
+      "tokPerSec": 3.4882271130828704,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:14b",
+        "params": 14.770033664,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 48,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 9.816619525119998,
+      "tokPerSec": 1.7985740997157418,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:32b",
+        "params": 32.763876352,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 64,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 20.50304828416,
+      "tokPerSec": null,
+      "runMode": "none",
+      "llmfitFit": "TooTight"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "llama3.2:1b",
+        "params": 1.2358144,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 16,
+        "kvHeads": 8,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.341772352,
+      "tokPerSec": 21.495946316857935,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "llama3.2:3b",
+        "params": 3.212749824,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.80089489792,
+      "tokPerSec": 8.26861768120044,
+      "runMode": "cpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --memory 0G --ram 16G --cpu-cores 8, 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "gemma2:27b",
+        "params": 27.22712832,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 46,
+        "kvHeads": 16,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 17.729234425599998,
+      "tokPerSec": null,
+      "runMode": "none",
+      "llmfitFit": "TooTight"
+    }
+  }
+]

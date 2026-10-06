@@ -1,0 +1,245 @@
+[
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; setup 24gb-7900xtx-real",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:0.5b",
+        "params": 0.494032768,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 24,
+        "kvHeads": 2,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 0.83341400544,
+      "tokPerSec": 2137.5100365812173,
+      "runMode": "gpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; setup 8gb-named-card",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 8589934592,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 8589934592,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:0.5b",
+        "params": 0.494032768,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 24,
+        "kvHeads": 2,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 0.83341400544,
+      "tokPerSec": 2137.5100365812173,
+      "runMode": "gpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; setup 16gb-apple-m2",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:0.5b",
+        "params": 0.494032768,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 24,
+        "kvHeads": 2,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 0.83341400544,
+      "tokPerSec": 222.65729547721014,
+      "runMode": "gpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; setup 16gb-cpu-only",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [],
+        "bestVramBytes": null,
+        "unifiedMemory": false,
+        "backend": "cpu"
+      },
+      "model": {
+        "id": "qwen2.5:0.5b",
+        "params": 0.494032768,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 24,
+        "kvHeads": 2,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 0.83341400544,
+      "tokPerSec": 53.77173685774624,
+      "runMode": "cpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; unknown GPU, vulkan K=150",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Generic Graphics 8GB",
+            "vramBytes": 8589934592
+          }
+        ],
+        "bestVramBytes": 8589934592,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:3b",
+        "params": 3.085938688,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 36,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.43046943904,
+      "tokPerSec": 61.48858392354423,
+      "runMode": "gpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; unknown GPU, vulkan K=150",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Generic Graphics 8GB",
+            "vramBytes": 8589934592
+          }
+        ],
+        "bestVramBytes": 8589934592,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:7b",
+        "params": 7.615616512,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 4,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 5.13580757696,
+      "tokPerSec": 24.915907950591933,
+      "runMode": "gpu"
+    }
+  },
+  {
+    "source": "hand-derived from llmfit 1.1.16 formulas (fit.rs estimate_tps; models.rs estimate_memory_gb_with_kv), 2026-10-06; unknown GPU, vulkan K=150",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Generic Graphics 8GB",
+            "vramBytes": 8589934592
+          }
+        ],
+        "bestVramBytes": 8589934592,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:14b",
+        "params": 14.770033664,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 48,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 9.816619525119998,
+      "tokPerSec": 6.423478927556221,
+      "runMode": "partial"
+    }
+  }
+]

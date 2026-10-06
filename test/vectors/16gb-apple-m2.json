@@ -1,0 +1,298 @@
+[
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:1.5b",
+        "params": 1.543714304,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.5047292963199999,
+      "tokPerSec": 71.25670839155481,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:3b",
+        "params": 3.085938688,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 36,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.43046943904,
+      "tokPerSec": 35.64555589770681,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:7b",
+        "params": 7.615616512,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 4,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 5.13580757696,
+      "tokPerSec": 14.444004609038801,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:14b",
+        "params": 14.770033664,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 48,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 9.816619525119998,
+      "tokPerSec": 7.447511800065184,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "qwen2.5:32b",
+        "params": 32.763876352,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 64,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 20.50304828416,
+      "tokPerSec": null,
+      "runMode": "none",
+      "llmfitFit": "TooTight"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "llama3.2:1b",
+        "params": 1.2358144,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 16,
+        "kvHeads": 8,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.341772352,
+      "tokPerSec": 89.01012967643038,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "llama3.2:3b",
+        "params": 3.212749824,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.80089489792,
+      "tokPerSec": 34.238582530850685,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json --profile apple-m2-16gb (custom profile: 16 GB unified, 100 GB/s), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 17179869184,
+        "cpuCores": 8,
+        "gpus": [
+          {
+            "model": "Apple M2",
+            "vramBytes": null,
+            "vendor": "Apple"
+          }
+        ],
+        "bestVramBytes": null,
+        "unifiedMemory": true,
+        "backend": "metal"
+      },
+      "model": {
+        "id": "gemma2:27b",
+        "params": 27.22712832,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 46,
+        "kvHeads": 16,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 17.729234425599998,
+      "tokPerSec": null,
+      "runMode": "none",
+      "llmfitFit": "TooTight"
+    }
+  }
+]

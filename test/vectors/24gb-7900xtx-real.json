@@ -1,0 +1,298 @@
+[
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:1.5b",
+        "params": 1.543714304,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.5047292963199999,
+      "tokPerSec": 684.0644005589262,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:3b",
+        "params": 3.085938688,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 36,
+        "kvHeads": 2,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.43046943904,
+      "tokPerSec": 342.19733661798534,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:7b",
+        "params": 7.615616512,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 4,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 5.13580757696,
+      "tokPerSec": 138.6624442467725,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:14b",
+        "params": 14.770033664,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 48,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 9.816619525119998,
+      "tokPerSec": 71.49611328062578,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "qwen2.5:32b",
+        "params": 32.763876352,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 64,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 20.50304828416,
+      "tokPerSec": 32.23061852189962,
+      "runMode": "gpu",
+      "llmfitFit": "Marginal"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "llama3.2:1b",
+        "params": 1.2358144,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 16,
+        "kvHeads": 8,
+        "headDim": 64
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 1.341772352,
+      "tokPerSec": 854.4972448937316,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "llama3.2:3b",
+        "params": 3.212749824,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 28,
+        "kvHeads": 8,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 2.80089489792,
+      "tokPerSec": 328.6903922961666,
+      "runMode": "gpu",
+      "llmfitFit": "Perfect"
+    }
+  },
+  {
+    "source": "llmfit 1.1.16 plan --json on Dawid's real box (AMD Radeon RX 7900 XTX 24 GB, 95.7 GB RAM, 24 cores), 2026-10-06",
+    "input": {
+      "profile": {
+        "ramBytes": 102757092556.8,
+        "cpuCores": 24,
+        "gpus": [
+          {
+            "model": "AMD Radeon RX 7900 XTX",
+            "vramBytes": 25769803776,
+            "vendor": "AMD"
+          }
+        ],
+        "bestVramBytes": 25769803776,
+        "unifiedMemory": false,
+        "backend": "vulkan"
+      },
+      "model": {
+        "id": "gemma2:27b",
+        "params": 27.22712832,
+        "quant": "Q4_K_M",
+        "kind": "text",
+        "layers": 46,
+        "kvHeads": 16,
+        "headDim": 128
+      },
+      "opts": {
+        "ctx": 4096
+      }
+    },
+    "expect": {
+      "needGB": 17.729234425599998,
+      "tokPerSec": 38.7848467744688,
+      "runMode": "gpu",
+      "llmfitFit": "Good"
+    }
+  }
+]
