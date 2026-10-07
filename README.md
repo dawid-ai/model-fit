@@ -37,6 +37,10 @@ const result = fit(profile, spec ?? { params: 14 }, { ctx: 4096 });
 `fit()` never guesses a pass: unknown memory gives `runMode: "none"` and `tokPerSec: null`, and
 `estimated` says which parts came from fallbacks (no architecture data, an unknown GPU).
 
+A model too big for the GPU runs partly offloaded (`runMode: "partial"`) only if the whole model
+also fits in system RAM on its own, as in llmfit. VRAM and RAM are not added together: an 8 GB
+card with 8 GB of RAM can't run a model that needs 10 GB.
+
 Options let an app be stricter than llmfit: `unifiedUsable` (share of Apple unified memory a model
 may use, default 1) and `minUsefulVramBytes` (a GPU below this counts as none, default 0).
 

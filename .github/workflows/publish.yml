@@ -23,7 +23,10 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - name: Check the tag matches package.json
-        run: test "v$(node -p "require('./package.json').version")" = "${{ github.event.release.tag_name }}"
+        # The tag goes through an env var, never straight into the script, so a tag name can't inject shell.
+        env:
+          TAG: ${{ github.event.release.tag_name }}
+        run: test "v$(node -p "require('./package.json').version")" = "$TAG"
       - run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
