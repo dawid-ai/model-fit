@@ -106,11 +106,13 @@ for (const s of SETUPS) {
 }
 // Unknown 8 GB card (name not in the table) → fixed Vulkan constant: K / params × quant × cores bonus.
 const unknown = { ramBytes: 16 * GiB, cpuCores: 8, gpus: [{ model: "Generic Graphics 8GB", vramBytes: 8 * GiB }], bestVramBytes: 8 * GiB, unifiedMemory: false, backend: "vulkan" };
-for (const m of [MODELS[2], MODELS[3], MODELS[4]]) {
+// All 9 models: on the GPU if it fits 8 GB, else partly offloaded if it fits the 16 GB of RAM
+// (llmfit's offload pool), else it won't run (no speed).
+for (const m of MODELS) {
   const need = llmfitNeedGB(m);
-  const gpu = need / 8 <= 0.98;
-  const tok = (150 / m.params) * 1.15 * 1.1 * (gpu ? 1.0 : 0.5);
-  hand.push({ source: `${handSource}; unknown GPU, vulkan K=150`, input: { profile: unknown, model: handModel(m), opts: { ctx: 4096 } }, expect: { needGB: need, tokPerSec: tok, runMode: gpu ? "gpu" : "partial" } });
+  const runMode = need / 8 <= 0.98 ? "gpu" : need / 16 <= 0.98 ? "partial" : "none";
+  const tok = runMode === "none" ? null : (150 / m.params) * 1.15 * 1.1 * (runMode === "gpu" ? 1.0 : 0.5);
+  hand.push({ source: `${handSource}; unknown GPU, vulkan K=150`, input: { profile: unknown, model: handModel(m), opts: { ctx: 4096 } }, expect: { needGB: need, tokPerSec: tok, runMode } });
 }
 writeFileSync(path.join(out, "hand-derived.json"), JSON.stringify(hand, null, 2) + "\n");
 console.log("hand-derived", hand.length);

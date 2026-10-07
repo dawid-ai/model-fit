@@ -19,10 +19,15 @@ const dir = path.join(here, "vectors");
 const files = readdirSync(dir).filter((f) => f.endsWith(".json"));
 
 describe("M1: golden vectors match llmfit", () => {
-  it("has the coverage the contract asks for", () => {
+  it("covers every model on every reference machine (9 models × 5 machines), most from real llmfit runs", () => {
     const all = files.flatMap((f) => JSON.parse(readFileSync(path.join(dir, f), "utf8")) as Vector[]);
     expect(all.filter((v) => v.source.startsWith("llmfit 1.1.16 plan --json")).length).toBeGreaterThanOrEqual(3);
-    expect(new Set(all.map((v) => v.input.model.id)).size).toBe(9); // all 9 catalog models
+    const machines = new Set(all.map((v) => JSON.stringify(v.input.profile)));
+    const models = new Set(all.map((v) => v.input.model.id));
+    expect(machines.size).toBe(5); // 24 GB named, 8 GB named, 16 GB Apple, 16 GB CPU-only, 8 GB unknown
+    expect(models.size).toBe(9);
+    const pairs = new Set(all.map((v) => `${JSON.stringify(v.input.profile)}|${v.input.model.id}`));
+    expect(pairs.size).toBe(machines.size * models.size); // no hole: every model on every machine
   });
 
   for (const f of files) {
@@ -66,6 +71,15 @@ describe("M2: fallbacks are honest", () => {
     expect(gpuBandwidthGBps("NVIDIA GeForce RTX 5070 Ti")).toBe(896); // the more specific entry wins
   });
 
+  it("matches table entries as whole words only (deviation from llmfit's substring match)", () => {
+    expect(gpuBandwidthGBps("NVIDIA RTX A1000")).toBeNull(); // not an A100
+    expect(gpuBandwidthGBps("NVIDIA T400")).toBeNull(); // not a T4
+    expect(gpuBandwidthGBps("NVIDIA Quadro M4000")).toBeNull(); // not an Apple M4
+    expect(gpuBandwidthGBps("NVIDIA A100 80GB PCIe")).toBe(1555);
+    expect(gpuBandwidthGBps("Apple M2 Pro")).toBe(200);
+    expect(gpuBandwidthGBps("AMD Ryzen AI MAX+ 395 w/ Radeon 8060S")).toBe(256);
+  });
+
   it("unknown memory and no GPU → won't run, no speed, never a guessed pass", () => {
     const r = fit({ ramBytes: null, cpuCores: null, gpus: [], bestVramBytes: null, unifiedMemory: false }, { params: 1 });
     expect(r.runMode).toBe("none");
@@ -74,10 +88,18 @@ describe("M2: fallbacks are honest", () => {
     expect(r.level).toBe("too-tight");
   });
 
-  it("an exact file size replaces the params estimate", () => {
-    const a = fit(gpu24, { params: 3, sizeBytes: 2_000_000_000 });
+  it("an exact file size replaces the params estimate, counted in real bytes", () => {
+    const a = fit(gpu24, { params: 3, sizeBytes: 2 * GiB });
     expect(a.estimated.weights).toBe(false);
-    expect(a.needBytes).toBeLessThan(fit(gpu24, { params: 3, sizeBytes: 3_000_000_000 }).needBytes);
+    // 2 GiB of weights + the params×ctx KV fallback + 0.5 GiB overhead — no 1e9-vs-GiB inflation.
+    expect(a.needBytes / GiB).toBeCloseTo(2 + 0.000008 * 3 * 4096 + 0.5, 6);
+  });
+
+  it("prefers the GPU whenever the model fits it (deviation: llmfit 1.1.16 may pick offload for a near-full card)", () => {
+    const sixGb: FitProfile = { ramBytes: 32 * GiB, cpuCores: 8, gpus: [{ model: "AMD Radeon RX 7900 XTX", vramBytes: 6 * GiB }], bestVramBytes: 6 * GiB, unifiedMemory: false };
+    const r = fit(sixGb, specFor("qwen2.5:7b")!); // ~5.1 GB of 6 GB → marginal, but all on the GPU
+    expect(r.runMode).toBe("gpu");
+    expect(r.level).toBe("marginal");
   });
 
   it("non-text models get a memory verdict but no words-per-second", () => {
@@ -104,7 +126,7 @@ describe("M2: fallbacks are honest", () => {
 describe("M3: level boundaries", () => {
   // A 10 GiB pool and models whose need lands exactly on each boundary.
   const pool: FitProfile = { ramBytes: 64 * GiB, cpuCores: 8, gpus: [{ model: "x", vramBytes: 10 * GiB }], bestVramBytes: 10 * GiB, unifiedMemory: false };
-  const sized = (needGB: number): FitModel => ({ params: 1, sizeBytes: (needGB - 0.5 - 0.000008 * 4096) * 1e9 });
+  const sized = (needGB: number): FitModel => ({ params: 1, sizeBytes: (needGB - 0.5 - 0.000008 * 4096) * GiB });
   // Points sit a hair inside each side of a boundary — exactly ON 0.60/0.85/0.98 is float noise.
   it.each([
     [5.99, "perfect"],

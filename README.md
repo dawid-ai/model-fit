@@ -40,6 +40,25 @@ const result = fit(profile, spec ?? { params: 14 }, { ctx: 4096 });
 Options let an app be stricter than llmfit: `unifiedUsable` (share of Apple unified memory a model
 may use, default 1) and `minUsefulVramBytes` (a GPU below this counts as none, default 0).
 
+## Differences from llmfit
+
+The numbers track llmfit closely (the golden vectors hold us within 10% on memory and 25% on
+speed), but a few choices differ on purpose:
+
+- **GPU first.** A model that fits the graphics card (up to 98% of it) runs there. llmfit 1.1.16
+  may report a near-full card as partly offloaded to RAM, which halves its speed estimate.
+- **Total RAM, not free RAM.** `fit()` uses the RAM you pass in. llmfit's live run uses the RAM
+  free at that moment, which changes minute to minute; pass free RAM if that's what you want.
+- **Fit levels** use llmfit's current source thresholds (60% / 85% / 98% of the memory pool, and
+  "perfect" only on the GPU). The 1.1.16 binary uses older rules ("perfect" needs VRAM of at least
+  1.2× the need or need + 2 GB; processor-only caps at "marginal").
+- **Whole-word GPU names.** The bandwidth table matches whole words, so an "RTX A1000" isn't read
+  as an A100 or a "T400" as a T4. llmfit matches any substring.
+- **Exact file sizes** (`sizeBytes`) are counted in real bytes (GiB), like device memory.
+- **No speed for a model that won't fit.** llmfit still prints a speed for "too tight".
+- **Small models.** Speed is memory bandwidth ÷ weights, as in llmfit, which overestimates very
+  small models several times over. Apps should cap how they word big numbers.
+
 ## Data
 
 The tables in `data/` are plain JSON so other languages can use them:

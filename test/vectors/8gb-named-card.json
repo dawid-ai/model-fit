@@ -1,6 +1,6 @@
 [
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -37,7 +37,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -74,7 +74,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -111,7 +111,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -148,7 +148,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -185,7 +185,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -222,7 +222,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,
@@ -259,7 +259,7 @@
     }
   },
   {
-    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-06",
+    "source": "llmfit 1.1.16 plan --json --memory 8G --ram 16G --cpu-cores 8 (card name kept: AMD Radeon RX 7900 XTX → 960 GB/s), 2026-10-07",
     "input": {
       "profile": {
         "ramBytes": 17179869184,

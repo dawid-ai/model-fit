@@ -78,11 +78,22 @@ function quantRow(q: string | undefined): QuantRow {
   return Object.hasOwn(QUANTS, key) ? QUANTS[key]! : quantTable.default;
 }
 
-/** Memory bandwidth (GB/s) for a GPU name, or null when unknown or a mobile part. */
+/** Memory bandwidth (GB/s) for a GPU name, or null when unknown or a mobile part. A table entry
+ *  matches only as a whole word (llmfit matches any substring, which reads an "RTX A1000" as an
+ *  A100 and a "T400" as a T4). */
 export function gpuBandwidthGBps(name: string): number | null {
   const lower = name.toLowerCase();
   if (bandwidthTable.mobileMarkers.some((m) => lower.includes(m))) return null;
-  return bandwidthTable.gpus.find((g) => lower.includes(g.match))?.gbps ?? null;
+  return bandwidthTable.gpus.find((g) => wholeWord(lower, g.match))?.gbps ?? null;
+}
+
+function wholeWord(haystack: string, needle: string): boolean {
+  for (let i = haystack.indexOf(needle); i !== -1; i = haystack.indexOf(needle, i + 1)) {
+    const before = haystack[i - 1];
+    const after = haystack[i + needle.length];
+    if ((before === undefined || !/[a-z0-9]/.test(before)) && (after === undefined || !/[a-z0-9]/.test(after))) return true;
+  }
+  return false;
 }
 
 function backendOf(p: FitProfile): Backend {
@@ -106,7 +117,8 @@ export function fit(profile: FitProfile, model: FitModel, opts: FitOptions = {})
   const q = quantRow(model.quant);
   const params = Math.max(model.params, 0.1);
 
-  const weightsGB = model.sizeBytes !== undefined ? model.sizeBytes / 1e9 : params * q.bpp;
+  // An exact file size is real bytes, compared against device memory in GiB — so GiB here too.
+  const weightsGB = model.sizeBytes !== undefined ? model.sizeBytes / GiB : params * q.bpp;
   const exactKv = model.layers !== undefined && model.kvHeads !== undefined && model.headDim !== undefined;
   const kvGB = exactKv
     ? (2 * model.layers! * model.kvHeads! * model.headDim! * ctx * constants.kvBytesPerElement) / GiB

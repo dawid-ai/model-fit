@@ -4,8 +4,9 @@ import quant from "../data/quant.json" with { type: "json" };
 import bandwidth from "../data/gpu-bandwidth.json" with { type: "json" };
 import models from "../data/models.json" with { type: "json" };
 
-// M5: every number in the data is finite, positive, and plausible — so a bad data PR fails here,
-// naming the key, instead of showing a florist "Infinity words a second".
+// M5: every number in the data is a finite, plausible number — so a bad data PR (a typo, a number
+// written as a string) fails here, naming the key, instead of showing "Infinity words a second" or
+// turning every model red.
 const ok = (v: unknown, lo: number, hi: number): boolean => typeof v === "number" && Number.isFinite(v) && v >= lo && v <= hi;
 
 describe("M5: data sanity", () => {
@@ -23,9 +24,11 @@ describe("M5: data sanity", () => {
     expect(shadowed).toEqual([]);
   });
 
-  it("quant rows are plausible", () => {
-    const bad = Object.entries(quant.quants).filter(([, r]) => !ok(r.bpp, 0.1, 4) || !ok(r.speedBpp, 0.1, 4) || !ok(r.speedMultiplier, 0.1, 3));
+  it("every quant row, including the default, is plausible", () => {
+    const rows: [string, { bpp: unknown; speedBpp: unknown; speedMultiplier: unknown }][] = [["default", quant.default], ...Object.entries(quant.quants)];
+    const bad = rows.filter(([, r]) => !ok(r.bpp, 0.1, 4) || !ok(r.speedBpp, 0.1, 4) || !ok(r.speedMultiplier, 0.1, 3));
     expect(bad.map(([k]) => k)).toEqual([]);
+    expect(Object.hasOwn(quant.quants, constants.defaultQuant), "defaultQuant must be a known quant").toBe(true);
   });
 
   it("model specs are plausible and every Ollama tag is unique", () => {
@@ -37,9 +40,21 @@ describe("M5: data sanity", () => {
     expect(new Set(tags).size).toBe(tags.length);
   });
 
-  it("constants are plausible", () => {
-    expect(ok(constants.efficiency, 0.1, 1)).toBe(true);
-    expect(constants.levels.perfectMax < constants.levels.goodMax && constants.levels.goodMax < constants.levels.marginalMax).toBe(true);
-    for (const [k, v] of Object.entries(constants.fallbackK)) expect(ok(v, 1, 1000), k).toBe(true);
+  it("every constant is a plausible number", () => {
+    const bounds: [string, unknown, number, number][] = [
+      ["overheadGB", constants.overheadGB, 0, 8],
+      ["kvBytesPerElement", constants.kvBytesPerElement, 0.25, 4],
+      ["kvFallbackGBPerParamBPerToken", constants.kvFallbackGBPerParamBPerToken, 1e-7, 1e-3],
+      ["defaultContext", constants.defaultContext, 256, 1_048_576],
+      ["efficiency", constants.efficiency, 0.1, 1],
+      ["manyCoresThreshold", constants.manyCoresThreshold, 1, 512],
+      ["manyCoresBonus", constants.manyCoresBonus, 1, 2],
+      ...Object.entries(constants.levels).map(([k, v]): [string, unknown, number, number] => [`levels.${k}`, v, 0.01, 1]),
+      ...Object.entries(constants.runModeFactor).map(([k, v]): [string, unknown, number, number] => [`runModeFactor.${k}`, v, 0.01, 1]),
+      ...Object.entries(constants.fallbackK).map(([k, v]): [string, unknown, number, number] => [`fallbackK.${k}`, v, 1, 1000]),
+    ];
+    expect(bounds.filter(([, v, lo, hi]) => !ok(v, lo, hi)).map(([k]) => k)).toEqual([]);
+    const { perfectMax, goodMax, marginalMax } = constants.levels;
+    expect(perfectMax < goodMax && goodMax < marginalMax).toBe(true);
   });
 });
