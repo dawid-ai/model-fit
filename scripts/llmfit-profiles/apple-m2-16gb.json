@@ -1,0 +1,1 @@
+{"schema_version":1,"name":"apple-m2-16gb","match":{"gpu_name_contains":"Apple M2"},"hardware":{"total_ram_gb":16,"unified_memory":true,"gpu_memory_bandwidth_gbps":100,"ddr_bandwidth_gbps":100}}
