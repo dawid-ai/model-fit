@@ -15,6 +15,9 @@ const FORBIDDEN = [
   /\bXMLHttpRequest\b/,
   /\bWebSocket\b/,
   /\bprocess\./,
+  /\beval\s*\(/,
+  /\bFunction\s*\(/,
+  /\bglobalThis\b/,
 ];
 
 function jsFiles(dir: string): string[] {
