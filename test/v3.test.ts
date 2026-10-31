@@ -132,6 +132,12 @@ describe("quality estimate", () => {
   it("is not clamped at 100", () => {
     expect(qualityEstimate({ params: 400, family: "deepseek", generation: 4, quant: "Q8_0", releaseMonth: "2026-10", nowMonth: "2026-10" })).toBeGreaterThan(100);
   });
+  it("ignores a malformed release month instead of guessing", () => {
+    const plain = qualityEstimate({ params: 14 });
+    for (const bad of ["2026-13", "2026-1", "26-01", "2026-01-05", "soon"]) {
+      expect(qualityEstimate({ params: 14, releaseMonth: bad, nowMonth: "2026-10" }), bad).toBe(plain);
+    }
+  });
   it("quant names match in any case", () => {
     expect(quantRow("q8_0")).toEqual(quantRow("Q8_0"));
   });

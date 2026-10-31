@@ -68,11 +68,20 @@ const FAMILY_BONUS: [string, number][] = [
   ["starcoder", 1],
 ];
 
+// "YYYY-MM" → months since year 0, or null. No regex: consumers scan the built code for escapes.
+function monthIndex(s: string): number | null {
+  const [y, m, extra] = s.split("-");
+  if (extra !== undefined || y?.length !== 4 || m?.length !== 2) return null;
+  const year = Number(y);
+  const month = Number(m);
+  if (!Number.isInteger(year) || !Number.isInteger(month) || month < 1 || month > 12) return null;
+  return year * 12 + month;
+}
+
 function monthsBetween(from: string, to: string): number | null {
-  const a = /^(\d{4})-(\d{2})$/.exec(from);
-  const b = /^(\d{4})-(\d{2})$/.exec(to);
-  if (!a || !b) return null;
-  return (Number(b[1]) - Number(a[1])) * 12 + (Number(b[2]) - Number(a[2]));
+  const a = monthIndex(from);
+  const b = monthIndex(to);
+  return a === null || b === null ? null : b - a;
 }
 
 /** Estimated quality points (llmfit's scale: ~30 for a 0.5B model, ~95 for a 70B one, plus bonuses). */

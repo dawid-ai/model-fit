@@ -18,6 +18,8 @@ const FORBIDDEN = [
   /\beval\s*\(/,
   /\bFunction\s*\(/,
   /\bglobalThis\b/,
+  // Consumers (Skovern's gate) reject any backslash: an escape could hide a name from these scans.
+  /\\/,
 ];
 
 function jsFiles(dir: string): string[] {
