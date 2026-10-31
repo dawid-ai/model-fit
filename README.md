@@ -40,7 +40,7 @@ const profile = {
 
 const spec = specFor("qwen2.5:14b"); // a Hugging Face repo id or an Ollama tag
 const result = fit(profile, spec ?? { params: 14 }, { ctx: 4096 });
-// Ã¢â€ â€™ { needBytes, budgetBytes, share, runMode: "gpu", level: "perfect", tokPerSec: ~71, estimated }
+// → { needBytes, budgetBytes, share, runMode: "gpu", level: "perfect", tokPerSec: ~71, estimated }
 ```
 
 `fit()` never guesses a pass: unknown memory gives `runMode: "none"` and `tokPerSec: null`, and
@@ -76,7 +76,7 @@ memory-pressure factors. When all the experts don't fit the card but the active 
 
 `qualityEstimate({ params, activeParams, family, generation, releaseMonth, nowMonth, quant })`
 ports llmfit's quality score as a fallback for models without a benchmark: a continuous size curve,
-a mixture of experts counted as Ã¢Ë†Å¡(total Ãƒâ€” active), family, generation and recency bonuses, and a
+a mixture of experts counted as √(total × active), family, generation and recency bonuses, and a
 penalty per quantization. It isn't clamped at 100.
 
 ## Differences from llmfit
@@ -90,12 +90,12 @@ speed), but a few choices differ on purpose:
   free at that moment, which changes minute to minute; pass free RAM if that's what you want.
 - **Fit levels** use llmfit's current source thresholds (60% / 85% / 98% of the memory pool, and
   "perfect" only on the GPU). The 1.1.16 binary uses older rules ("perfect" needs VRAM of at least
-  1.2Ãƒâ€” the need or need + 2 GB; processor-only caps at "marginal").
+  1.2× the need or need + 2 GB; processor-only caps at "marginal").
 - **Whole-word GPU names.** The bandwidth table matches whole words, so an "RTX A1000" isn't read
   as an A100 or a "T400" as a T4. llmfit matches any substring.
 - **Exact file sizes** (`sizeBytes`) are counted in real bytes (GiB), like device memory.
 - **No speed for a model that won't fit.** llmfit still prints a speed for "too tight".
-- **Small models.** Speed is memory bandwidth ÃƒÂ· weights, as in llmfit, which overestimates very
+- **Small models.** Speed is memory bandwidth ÷ weights, as in llmfit, which overestimates very
   small models several times over. Apps should cap how they word big numbers.
 
 ## Data
