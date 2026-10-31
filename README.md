@@ -12,8 +12,17 @@ or processor only), and roughly how many tokens per second it writes.
 
 ## Install
 
+Each version ships as a GitHub release asset, not on npm (0.2.0 is the last npm version).
+Install the tarball by URL; your lockfile pins its hash:
+
 ```bash
-npm install @dawid-ai/model-fit
+pnpm add https://github.com/dawid-ai/model-fit/releases/download/v0.3.1/dawid-ai-model-fit-0.3.1.tgz
+```
+
+Every tarball carries a signed build attestation from the release workflow. Check it with:
+
+```bash
+gh attestation verify dawid-ai-model-fit-0.3.1.tgz -R dawid-ai/model-fit
 ```
 
 ## Use
