@@ -1,10 +1,11 @@
 import constants from "../data/constants.json" with { type: "json" };
 import quantTable from "../data/quant.json" with { type: "json" };
-import bandwidthTable from "../data/gpu-bandwidth.json" with { type: "json" };
+import { kvCacheGB } from "./kv.js";
+import { estimateSpeed, paramsPerToken, type QuantRow } from "./speed.js";
 
 // Hardware + a model → how much memory it needs, how much of the machine that is, and roughly how
-// fast it will write. Pure: no I/O, no network, no dependencies. Numbers only — every app writes
-// its own words. Formulas and tables are ported from llmfit 1.1.16 (MIT); see LICENSE.
+// fast it will write. Pure: no I/O, no network, no dependencies. Formulas and tables are ported from
+// llmfit 1.1.18 (MIT); see LICENSE.
 //
 // ponytail: memory mirrors llmfit's units for parity — weights in decimal GB (params_b × bytes per
 // param), KV cache and device memory in GiB. Unify the units if parity with llmfit stops mattering.
@@ -21,7 +22,7 @@ export interface FitProfile {
   gpus: { model: string; vramBytes: number | null; vendor?: string }[];
   /** Largest dedicated VRAM, or null when there's no readable dedicated VRAM. */
   bestVramBytes: number | null;
-  /** True when "GPU memory" is system RAM shared with the GPU (Apple Silicon). */
+  /** True when "GPU memory" is system RAM shared with the GPU (Apple Silicon, Ryzen AI Max, GB10). */
   unifiedMemory: boolean;
   /** Override the backend guess (unified → metal, NVIDIA → cuda, anything else → vulkan). */
   backend?: Backend;
@@ -30,7 +31,7 @@ export interface FitProfile {
 export type ModelKind = "text" | "stt" | "ocr" | "vision" | "embedding" | "image";
 
 export interface FitModel {
-  /** Billions of parameters. */
+  /** Billions of parameters (all of them, for a mixture-of-experts model). */
   params: number;
   /** Quantization label (e.g. "Q4_K_M"); defaults to Q4_K_M. */
   quant?: string;
@@ -41,6 +42,20 @@ export interface FitModel {
   headDim?: number;
   /** Non-text models get a memory verdict but no words-per-second (defaults to "text"). */
   kind?: ModelKind;
+  /** Mixture of experts: billions of parameters used per token. Memory still counts `params`. */
+  activeParams?: number;
+  numExperts?: number;
+  activeExperts?: number;
+  /** Layers that attend over the whole context. The rest keep `slidingWindow` tokens, or no KV
+   *  cache at all (linear or recurrent layers). Defaults to every layer. */
+  fullAttentionLayers?: number;
+  slidingWindow?: number;
+  /** Multi-head latent attention (DeepSeek, Kimi): cached elements per token per layer. */
+  mlaKvWidth?: number;
+  /** Precomputed KV cache at fp16, summed over layers: bytes per token for the full-context
+   *  layers, and for the sliding-window layers (which stop growing at `slidingWindow` tokens).
+   *  Wins over the per-layer fields; use it when layers differ (per-layer heads, shared KV). */
+  kvBytesPerToken?: { full: number; sliding?: number };
 }
 
 export interface FitOptions {
@@ -50,9 +65,15 @@ export interface FitOptions {
   unifiedUsable?: number;
   /** A GPU with less dedicated VRAM than this counts as no GPU (default 0). */
   minUsefulVramBytes?: number;
+  /** Memory held back from the GPU or unified pool for the desktop and driver (default 0). */
+  reserveBytes?: number;
+  /** Bytes per KV-cache element: 2 for fp16 (default), 1 for q8_0. */
+  kvBytesPerElement?: number;
+  /** System RAM bandwidth in GB/s for models partly in RAM (default 50, llmfit's fallback). */
+  ddrGBps?: number;
 }
 
-export type RunMode = "gpu" | "partial" | "cpu" | "none";
+export type RunMode = "gpu" | "moe-offload" | "partial" | "cpu" | "none";
 export type FitLevel = "perfect" | "good" | "marginal" | "too-tight";
 
 export interface FitResult {
@@ -60,46 +81,23 @@ export interface FitResult {
   needBytes: number;
   /** The memory pool it would run from (VRAM, unified memory, or RAM), 0 when unknown. */
   budgetBytes: number;
-  /** needBytes / budgetBytes; Infinity when the pool is unknown or empty. */
+  /** needBytes / budgetBytes (GPU-side need for MoE offload); Infinity when the pool is unknown. */
   share: number;
-  /** Where it runs: all on the GPU, partly offloaded to RAM, on the processor, or not at all. */
+  /** Where it runs: all on the GPU, MoE experts in RAM, partly offloaded, on the processor, or not at all. */
   runMode: RunMode;
   level: FitLevel;
   /** Estimated tokens per second; null when it won't run, memory is unknown, or it isn't a text model. */
   tokPerSec: number | null;
+  /** The KV cache part of `needBytes`. */
+  kvBytes: number;
   /** Which parts are estimates rather than read from the model's own data. */
   estimated: { weights: boolean; kv: boolean; speed: boolean };
 }
 
-type QuantRow = { bpp: number; speedBpp: number; speedMultiplier: number };
 const QUANTS = quantTable.quants as Record<string, QuantRow>;
-function quantRow(q: string | undefined): QuantRow {
-  const key = q ?? constants.defaultQuant;
-  return Object.hasOwn(QUANTS, key) ? QUANTS[key]! : quantTable.default;
-}
-
-/** Memory bandwidth (GB/s) for a GPU name, or null when unknown or a mobile part. A table entry
- *  matches only as a whole word (llmfit matches any substring, which reads an "RTX A1000" as an
- *  A100 and a "T400" as a T4). */
-export function gpuBandwidthGBps(name: string): number | null {
-  const lower = name.toLowerCase();
-  if (bandwidthTable.mobileMarkers.some((m) => lower.includes(m))) return null;
-  return bandwidthTable.gpus.find((g) => wholeWord(lower, g.match))?.gbps ?? null;
-}
-
-function wholeWord(haystack: string, needle: string): boolean {
-  for (let i = haystack.indexOf(needle); i !== -1; i = haystack.indexOf(needle, i + 1)) {
-    const before = haystack[i - 1];
-    const after = haystack[i + needle.length];
-    if ((before === undefined || !/[a-z0-9]/.test(before)) && (after === undefined || !/[a-z0-9]/.test(after))) return true;
-  }
-  return false;
-}
-
-function backendOf(p: FitProfile): Backend {
-  if (p.backend) return p.backend;
-  if (p.unifiedMemory) return "metal";
-  return p.gpus.some((g) => /nvidia|geforce|rtx|gtx|quadro|tesla/i.test(`${g.vendor ?? ""} ${g.model}`)) ? "cuda" : "vulkan";
+export function quantRow(q: string | undefined): QuantRow {
+  const key = (q ?? constants.defaultQuant).toUpperCase();
+  return Object.hasOwn(QUANTS, key) ? QUANTS[key]! : (quantTable.default as QuantRow);
 }
 
 function levelOf(share: number, runMode: RunMode): FitLevel {
@@ -116,29 +114,37 @@ export function fit(profile: FitProfile, model: FitModel, opts: FitOptions = {})
   const ctx = opts.ctx ?? constants.defaultContext;
   const q = quantRow(model.quant);
   const params = Math.max(model.params, 0.1);
+  const reserveGB = Math.max(opts.reserveBytes ?? 0, 0) / GiB;
+  const ddr = opts.ddrGBps ?? constants.ddrGBps;
 
   // An exact file size is real bytes, compared against device memory in GiB — so GiB here too.
   const weightsGB = model.sizeBytes !== undefined ? model.sizeBytes / GiB : params * q.bpp;
-  const exactKv = model.layers !== undefined && model.kvHeads !== undefined && model.headDim !== undefined;
-  const kvGB = exactKv
-    ? (2 * model.layers! * model.kvHeads! * model.headDim! * ctx * constants.kvBytesPerElement) / GiB
-    : constants.kvFallbackGBPerParamBPerToken * params * ctx;
-  const needGB = weightsGB + kvGB + constants.overheadGB;
+  const kv = kvCacheGB(model, ctx, opts.kvBytesPerElement);
+  const needGB = weightsGB + kv.gb + constants.overheadGB;
 
   const ramGB = profile.ramBytes !== null && profile.ramBytes > 0 ? profile.ramBytes / GiB : 0;
   const vramBytes = profile.bestVramBytes ?? 0;
   const hasGpu = !profile.unifiedMemory && vramBytes > 0 && vramBytes >= (opts.minUsefulVramBytes ?? 0);
   const max = constants.levels.marginalMax;
+  const moe = model.activeParams !== undefined && model.activeParams < params;
 
   let runMode: RunMode = "none";
   let poolGB = 0;
+  let gpuPoolGB = 0;
+  let shareNeedGB = needGB;
   if (profile.unifiedMemory) {
-    poolGB = ramGB * (opts.unifiedUsable ?? 1);
+    poolGB = gpuPoolGB = Math.max(ramGB * (opts.unifiedUsable ?? 1) - reserveGB, 0);
     if (poolGB > 0 && needGB / poolGB <= max) runMode = "gpu";
   } else if (hasGpu) {
-    poolGB = vramBytes / GiB;
-    if (needGB / poolGB <= max) runMode = "gpu";
-    else if (ramGB > 0 && needGB / ramGB <= max) {
+    poolGB = gpuPoolGB = Math.max(vramBytes / GiB - reserveGB, 0);
+    // Active weights on the GPU, the other experts in RAM (llmfit moe_offload_path, plus the KV cache).
+    const activeGpuGB = paramsPerToken(model) * q.bpp * constants.moe.activeVramFactor + kv.gb + constants.overheadGB;
+    const expertsRamGB = Math.max(weightsGB - paramsPerToken(model) * q.bpp, 0);
+    if (poolGB > 0 && needGB / poolGB <= max) runMode = "gpu";
+    else if (moe && poolGB > 0 && activeGpuGB / poolGB <= max && ramGB > 0 && expertsRamGB / ramGB <= max) {
+      runMode = "moe-offload";
+      shareNeedGB = activeGpuGB;
+    } else if (ramGB > 0 && needGB / ramGB <= max) {
       runMode = "partial"; // the RAM pool carries it; the GPU takes what fits
       poolGB = ramGB;
     }
@@ -146,9 +152,12 @@ export function fit(profile: FitProfile, model: FitModel, opts: FitOptions = {})
     poolGB = ramGB;
     if (poolGB > 0 && needGB / poolGB <= max) runMode = "cpu";
   }
-  const share = poolGB > 0 ? needGB / poolGB : Number.POSITIVE_INFINITY;
+  const share = poolGB > 0 ? shareNeedGB / poolGB : Number.POSITIVE_INFINITY;
 
-  const tok = (model.kind ?? "text") === "text" && runMode !== "none" ? speed(profile, params, q, runMode) : null;
+  const tok =
+    (model.kind ?? "text") === "text" && runMode !== "none"
+      ? estimateSpeed({ profile, model, q, runMode, gpuPoolGB, gpuWeightsGB: gpuPoolGB - kv.gb - constants.overheadGB, ddrGBps: ddr })
+      : null;
   return {
     needBytes: needGB * GiB,
     budgetBytes: poolGB * GiB,
@@ -156,21 +165,7 @@ export function fit(profile: FitProfile, model: FitModel, opts: FitOptions = {})
     runMode,
     level: levelOf(share, runMode),
     tokPerSec: tok?.value ?? null,
-    estimated: { weights: model.sizeBytes === undefined, kv: !exactKv, speed: tok?.estimatedConstant ?? true },
+    kvBytes: kv.gb * GiB,
+    estimated: { weights: model.sizeBytes === undefined, kv: !kv.exact, speed: tok?.estimatedConstant ?? true },
   };
-}
-
-function speed(profile: FitProfile, params: number, q: QuantRow, runMode: RunMode): { value: number; estimatedConstant: boolean } {
-  const factor = constants.runModeFactor[runMode as "gpu" | "partial" | "cpu"];
-  const gpuName = profile.gpus.find((g) => g.vramBytes === profile.bestVramBytes)?.model ?? profile.gpus[0]?.model;
-  const bw = runMode !== "cpu" && gpuName ? gpuBandwidthGBps(gpuName) : null;
-  if (bw !== null) {
-    // Generation is memory-bound: each token reads the weights once.
-    return { value: Math.max(0.1, (bw / (params * q.speedBpp)) * constants.efficiency * factor), estimatedConstant: false };
-  }
-  // Unknown GPU (or CPU-only): a fixed throughput constant per backend.
-  const backend = runMode === "cpu" ? (backendOf(profile) === "cpu-arm" ? "cpu-arm" : "cpu") : backendOf(profile);
-  let v = (constants.fallbackK[backend] / params) * q.speedMultiplier;
-  if ((profile.cpuCores ?? 0) >= constants.manyCoresThreshold) v *= constants.manyCoresBonus;
-  return { value: Math.max(0.1, v * factor), estimatedConstant: true };
 }

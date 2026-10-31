@@ -31,7 +31,7 @@ const profile = {
 
 const spec = specFor("qwen2.5:14b"); // a Hugging Face repo id or an Ollama tag
 const result = fit(profile, spec ?? { params: 14 }, { ctx: 4096 });
-// → { needBytes, budgetBytes, share, runMode: "gpu", level: "perfect", tokPerSec: ~71, estimated }
+// â†’ { needBytes, budgetBytes, share, runMode: "gpu", level: "perfect", tokPerSec: ~71, estimated }
 ```
 
 `fit()` never guesses a pass: unknown memory gives `runMode: "none"` and `tokPerSec: null`, and
@@ -41,8 +41,34 @@ A model too big for the GPU runs partly offloaded (`runMode: "partial"`) only if
 also fits in system RAM on its own, as in llmfit. VRAM and RAM are not added together: an 8 GB
 card with 8 GB of RAM can't run a model that needs 10 GB.
 
-Options let an app be stricter than llmfit: `unifiedUsable` (share of Apple unified memory a model
-may use, default 1) and `minUsefulVramBytes` (a GPU below this counts as none, default 0).
+Options let an app be stricter than llmfit: `unifiedUsable` (share of unified memory a model may
+use, default 1), `minUsefulVramBytes` (a GPU below this counts as none, default 0), and
+`reserveBytes` (memory held back from the GPU or unified pool for the desktop, default 0).
+`kvBytesPerElement` sizes the KV cache (2 for fp16, 1 for q8_0) and `ddrGBps` sets system RAM
+bandwidth for models partly in RAM (default 50).
+
+### Mixture of experts
+
+Pass `activeParams` (billions used per token), and `numExperts` / `activeExperts` when known.
+Memory counts every expert; speed reads only the active ones, with llmfit's expert overhead and
+memory-pressure factors. When all the experts don't fit the card but the active ones do,
+`runMode` is `"moe-offload"`: the other experts stay in RAM.
+
+### KV cache geometry
+
+`layers`, `kvHeads` and `headDim` give the standard cache. For newer architectures add:
+
+- `fullAttentionLayers`: layers that attend over the whole context. The others hold
+  `slidingWindow` tokens (Gemma, gpt-oss) or no growing cache (linear or recurrent layers).
+- `mlaKvWidth`: elements cached per token per layer for latent attention (DeepSeek, Kimi).
+- `kvBytesPerToken: { full, sliding }`: a precomputed fp16 figure, when layers differ.
+
+### Quality estimate
+
+`qualityEstimate({ params, activeParams, family, generation, releaseMonth, nowMonth, quant })`
+ports llmfit's quality score as a fallback for models without a benchmark: a continuous size curve,
+a mixture of experts counted as âˆš(total Ã— active), family, generation and recency bonuses, and a
+penalty per quantization. It isn't clamped at 100.
 
 ## Differences from llmfit
 
@@ -55,12 +81,12 @@ speed), but a few choices differ on purpose:
   free at that moment, which changes minute to minute; pass free RAM if that's what you want.
 - **Fit levels** use llmfit's current source thresholds (60% / 85% / 98% of the memory pool, and
   "perfect" only on the GPU). The 1.1.16 binary uses older rules ("perfect" needs VRAM of at least
-  1.2× the need or need + 2 GB; processor-only caps at "marginal").
+  1.2Ã— the need or need + 2 GB; processor-only caps at "marginal").
 - **Whole-word GPU names.** The bandwidth table matches whole words, so an "RTX A1000" isn't read
   as an A100 or a "T400" as a T4. llmfit matches any substring.
 - **Exact file sizes** (`sizeBytes`) are counted in real bytes (GiB), like device memory.
 - **No speed for a model that won't fit.** llmfit still prints a speed for "too tight".
-- **Small models.** Speed is memory bandwidth ÷ weights, as in llmfit, which overestimates very
+- **Small models.** Speed is memory bandwidth Ã· weights, as in llmfit, which overestimates very
   small models several times over. Apps should cap how they word big numbers.
 
 ## Data

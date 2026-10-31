@@ -1,5 +1,5 @@
 {
-  "source": "Ported from llmfit 1.1.16 (MIT, Alex Jones): llmfit-core/src/models.rs, fit.rs. See LICENSE.",
+  "source": "Ported from llmfit 1.1.18 (MIT, Alex Jones): llmfit-core/src/models.rs, fit.rs. See LICENSE.",
   "overheadGB": 0.5,
   "kvBytesPerElement": 2,
   "kvFallbackGBPerParamBPerToken": 0.000008,
@@ -7,8 +7,22 @@
   "defaultQuant": "Q4_K_M",
   "efficiency": 0.55,
   "levels": { "perfectMax": 0.6, "goodMax": 0.85, "marginalMax": 0.98 },
-  "runModeFactor": { "gpu": 1.0, "partial": 0.5, "cpu": 0.3 },
+  "runModeFactor": { "gpu": 1.0, "partial": 0.5, "cpu": 0.3, "moeOffload": 0.8 },
   "fallbackK": { "cuda": 220, "rocm": 180, "vulkan": 150, "metal": 160, "sycl": 100, "cpu": 70, "cpu-arm": 90 },
   "manyCoresThreshold": 8,
-  "manyCoresBonus": 1.1
+  "manyCoresBonus": 1.1,
+  "ddrGBps": 50,
+  "moe": {
+    "pressureStart": 0.6,
+    "pressureFloor": 0.3,
+    "activeVramFactor": 1.1,
+    "overheadByExperts": [
+      { "maxExperts": 8, "overhead": 0.9 },
+      { "maxExperts": 16, "overhead": 0.85 },
+      { "maxExperts": 32, "overhead": 0.8 },
+      { "maxExperts": 64, "overhead": 0.7 },
+      { "maxExperts": 1000000, "overhead": 0.4 }
+    ],
+    "overheadUnknown": 0.6
+  }
 }

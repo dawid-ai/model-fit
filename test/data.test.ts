@@ -25,8 +25,10 @@ describe("M5: data sanity", () => {
   });
 
   it("every quant row, including the default, is plausible", () => {
-    const rows: [string, { bpp: unknown; speedBpp: unknown; speedMultiplier: unknown }][] = [["default", quant.default], ...Object.entries(quant.quants)];
-    const bad = rows.filter(([, r]) => !ok(r.bpp, 0.1, 4) || !ok(r.speedBpp, 0.1, 4) || !ok(r.speedMultiplier, 0.1, 3));
+    const rows: [string, { bpp: unknown; speedBpp: unknown; speedMultiplier: unknown; qualityPenalty: unknown }][] = [["default", quant.default], ...Object.entries(quant.quants)];
+    const bad = rows.filter(
+      ([, r]) => !ok(r.bpp, 0.1, 4) || !ok(r.speedBpp, 0.1, 4) || !ok(r.speedMultiplier, 0.1, 3) || !ok(r.qualityPenalty, -30, 0),
+    );
     expect(bad.map(([k]) => k)).toEqual([]);
     expect(Object.hasOwn(quant.quants, constants.defaultQuant), "defaultQuant must be a known quant").toBe(true);
   });
@@ -49,6 +51,12 @@ describe("M5: data sanity", () => {
       ["efficiency", constants.efficiency, 0.1, 1],
       ["manyCoresThreshold", constants.manyCoresThreshold, 1, 512],
       ["manyCoresBonus", constants.manyCoresBonus, 1, 2],
+      ["ddrGBps", constants.ddrGBps, 5, 1000],
+      ["moe.pressureStart", constants.moe.pressureStart, 0.1, 1],
+      ["moe.pressureFloor", constants.moe.pressureFloor, 0.05, 1],
+      ["moe.activeVramFactor", constants.moe.activeVramFactor, 1, 2],
+      ["moe.overheadUnknown", constants.moe.overheadUnknown, 0.1, 1],
+      ...constants.moe.overheadByExperts.map((r, i): [string, unknown, number, number] => [`moe.overheadByExperts.${i}`, r.overhead, 0.1, 1]),
       ...Object.entries(constants.levels).map(([k, v]): [string, unknown, number, number] => [`levels.${k}`, v, 0.01, 1]),
       ...Object.entries(constants.runModeFactor).map(([k, v]): [string, unknown, number, number] => [`runModeFactor.${k}`, v, 0.01, 1]),
       ...Object.entries(constants.fallbackK).map(([k, v]): [string, unknown, number, number] => [`fallbackK.${k}`, v, 1, 1000]),
